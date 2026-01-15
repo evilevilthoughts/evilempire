@@ -1,0 +1,1338 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Reviews</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lazydog&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+
+    body, .font-display, .font-sans, .font-bubble, input, textarea, select, button, label, p, span, div, h1, h2, h3, h4 {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+    
+    h1, h2, h3 {
+      font-family: 'Lazydog', 'Comic Sans MS', cursive;
+    }
+
+    .star {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .star:hover {
+      transform: scale(1.1);
+    }
+
+    .tag-chip {
+      transition: all 0.2s ease;
+    }
+
+    .tag-chip:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .review-card {
+      transition: all 0.3s ease;
+    }
+
+    .review-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .loading-spinner {
+      border: 3px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: currentColor;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full font-sans" style="background-color: #ffe4e6;">
+  <div id="app-wrapper" class="w-full h-full overflow-auto">
+   <div class="min-h-full"><!-- Header -->
+    <header class="py-12 px-6">
+     <div class="max-w-6xl mx-auto text-center">
+      <h1 id="page-title" class="font-display text-6xl font-bold mb-3" style="color: #881337;">BOOKAS</h1>
+      <p id="page-subtitle" class="text-xl font-bubble" style="color: #9f1239;">rate ur fave books!!</p><!-- User Status -->
+      <div id="user-status" class="mt-6">
+       <div id="logged-out-status">
+        <p class="mb-4 font-bubble text-lg" style="color: #881337;">✨ welcome to bookas, ur cozy corner for sharing book reviews! create an account or login to start posting ur thoughts on ur favorite reads 📖💕</p>
+        <div class="flex gap-4 justify-center"><button id="show-login-btn" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #e11d48; color: #fff1f2;"> 🔑 login </button> <button id="show-signup-btn" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #fb7185; color: #fff1f2;"> ✍️ sign up </button>
+        </div>
+       </div>
+       <div id="logged-in-status" class="hidden">
+        <div class="mb-4 inline-block px-6 py-3 rounded-full shadow-lg" style="background-color: rgba(251, 113, 133, 0.2); border: 3px solid #fb7185;">
+         <p class="font-bubble font-bold" style="color: #881337;">hey <span id="current-username"></span>! 👋✨</p>
+        </div>
+        <div class="flex gap-3 justify-center flex-wrap"><button id="tab-submit" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #e11d48; color: #fff1f2;"> ✍️ write review </button> <button id="tab-browse" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #fb7185; color: #fff1f2;"> 📚 browse books </button> <button id="tab-howto" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #fb7185; color: #fff1f2;"> 💡 how to review </button> <button id="logout-btn" class="px-6 py-3 rounded-full font-bubble text-sm font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #881337; color: #fff1f2;"> logout </button>
+        </div>
+       </div>
+      </div>
+     </div>
+    </header>
+    <div class="max-w-6xl mx-auto px-6 pb-16"><!-- Login Modal -->
+     <div id="login-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background-color: rgba(0, 0, 0, 0.5);">
+      <div class="w-full max-w-md p-8 rounded-2xl shadow-2xl" style="background-color: #fff1f2;">
+       <h2 class="font-display text-3xl font-bold mb-6 text-center" style="color: #881337;">login 🔑</h2>
+       <form id="login-form">
+        <div class="mb-4"><label for="login-username" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Username</label> <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+        </div>
+        <div class="mb-6"><label for="login-password" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Password</label> <input type="password" id="login-password" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+        </div>
+        <div id="login-error" class="hidden mb-4 p-3 rounded-lg text-center font-bubble font-bold" style="background-color: #fecdd3; color: #881337;"></div>
+        <div class="flex gap-3"><button type="submit" id="login-submit-btn" class="flex-1 py-3 rounded-full font-bubble font-bold text-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2" style="background-color: #e11d48; color: #fff1f2;"> <span id="login-submit-text">login!</span> <span id="login-spinner" class="loading-spinner hidden"></span> </button> <button type="button" id="cancel-login-btn" class="px-6 py-3 rounded-full font-bubble font-bold transition-all shadow-md hover:shadow-lg" style="background-color: #fb7185; color: #fff1f2;"> cancel </button>
+        </div>
+       </form>
+      </div>
+     </div><!-- Edit Review Modal -->
+     <div id="edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background-color: rgba(0, 0, 0, 0.5);">
+      <div class="w-full max-w-2xl p-8 rounded-2xl shadow-2xl" style="background-color: #fff1f2;">
+       <h2 class="font-display text-3xl font-bold mb-6 text-center" style="color: #881337;">edit review ✏️</h2>
+       <form id="edit-form"><input type="hidden" id="edit-review-id">
+        <div class="mb-4"><label for="edit-book-title" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Book Title</label> <input type="text" id="edit-book-title" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+        </div>
+        <div class="mb-4"><label for="edit-author" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Author</label> <input type="text" id="edit-author" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+        </div>
+        <div class="mb-4"><label class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Rating</label>
+         <div id="edit-star-rating" class="flex gap-2 text-4xl" style="color: #fb7185;"><span class="edit-star" data-rating="1">☆</span> <span class="edit-star" data-rating="2">☆</span> <span class="edit-star" data-rating="3">☆</span> <span class="edit-star" data-rating="4">☆</span> <span class="edit-star" data-rating="5">☆</span>
+         </div><input type="hidden" id="edit-rating-value" required>
+        </div>
+        <div class="mb-4"><label for="edit-review-text" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Your Review</label> <textarea id="edit-review-text" required rows="5" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all resize-none font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;"></textarea>
+        </div>
+        <div class="mb-4"><label for="edit-tags" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Tags (comma-separated)</label> <input type="text" id="edit-tags" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+        </div>
+        <div class="mb-6"><label class="flex items-center gap-3 cursor-pointer"> <input type="checkbox" id="edit-has-spoilers" class="w-5 h-5 rounded cursor-pointer" style="accent-color: #e11d48;"> <span class="text-sm font-medium font-bubble" style="color: #881337;">⚠️ This review contains spoilers</span> </label>
+        </div>
+        <div id="edit-error" class="hidden mb-4 p-3 rounded-lg text-center font-bubble font-bold" style="background-color: #fecdd3; color: #881337;"></div>
+        <div class="flex gap-3"><button type="submit" id="edit-submit-btn" class="flex-1 py-3 rounded-full font-bubble font-bold text-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2" style="background-color: #e11d48; color: #fff1f2;"> <span id="edit-submit-text">save changes</span> <span id="edit-spinner" class="loading-spinner hidden"></span> </button> <button type="button" id="cancel-edit-btn" class="px-6 py-3 rounded-full font-bubble font-bold transition-all shadow-md hover:shadow-lg" style="background-color: #fb7185; color: #fff1f2;"> cancel </button>
+        </div>
+       </form>
+      </div>
+     </div><!-- Signup Modal -->
+     <div id="signup-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background-color: rgba(0, 0, 0, 0.5);">
+      <div class="w-full max-w-md p-8 rounded-2xl shadow-2xl" style="background-color: #fff1f2;">
+       <h2 class="font-display text-3xl font-bold mb-6 text-center" style="color: #881337;">sign up ✨</h2>
+       <form id="signup-form">
+        <div class="mb-4"><label for="signup-username" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Choose Username</label> <input type="text" id="signup-username" required minlength="3" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+         <p class="text-xs mt-1 font-bubble" style="color: #9f1239;">at least 3 characters</p>
+        </div>
+        <div class="mb-6"><label for="signup-password" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Choose Password</label> <input type="password" id="signup-password" required minlength="4" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+         <p class="text-xs mt-1 font-bubble" style="color: #9f1239;">at least 4 characters</p>
+        </div>
+        <div id="signup-error" class="hidden mb-4 p-3 rounded-lg text-center font-bubble font-bold" style="background-color: #fecdd3; color: #881337;"></div>
+        <div class="flex gap-3"><button type="submit" id="signup-submit-btn" class="flex-1 py-3 rounded-full font-bubble font-bold text-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2" style="background-color: #e11d48; color: #fff1f2;"> <span id="signup-submit-text">create account!</span> <span id="signup-spinner" class="loading-spinner hidden"></span> </button> <button type="button" id="cancel-signup-btn" class="px-6 py-3 rounded-full font-bubble font-bold transition-all shadow-md hover:shadow-lg" style="background-color: #fb7185; color: #fff1f2;"> cancel </button>
+        </div>
+       </form>
+      </div>
+     </div><!-- Submit View -->
+     <div id="submit-view" class="hidden"><!-- Review Form -->
+      <div class="mb-12 p-8 rounded-2xl shadow-lg" style="background-color: #fff1f2;">
+       <h2 class="font-display text-3xl font-bold mb-6" style="color: #881337;">Write a Review</h2>
+       <form id="review-form">
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+         <div class="relative"><label for="book-title" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Book Title</label> <input type="text" id="book-title" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+          <div id="book-title-suggestions" class="hidden absolute top-full left-0 right-0 mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto z-10"></div>
+         </div>
+         <div><label for="author" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Author</label> <input type="text" id="author" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+         </div>
+        </div>
+        <div class="mb-6"><label class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Rating</label>
+         <div id="star-rating" class="flex gap-2 text-4xl" style="color: #fb7185;"><span class="star" data-rating="1">☆</span> <span class="star" data-rating="2">☆</span> <span class="star" data-rating="3">☆</span> <span class="star" data-rating="4">☆</span> <span class="star" data-rating="5">☆</span>
+         </div><input type="hidden" id="rating-value" required>
+        </div>
+        <div class="mb-6"><label for="review-text" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Your Review</label> <textarea id="review-text" required rows="5" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all resize-none font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;"></textarea>
+        </div>
+        <div class="mb-6"><label for="tags" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Tags (comma-separated)</label> <input type="text" id="tags" placeholder="fiction, mystery, thriller" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+         <div id="tags-suggestions" class="hidden absolute top-full left-0 right-0 mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto z-10"></div>
+         <p class="text-sm mt-2 font-bubble" style="color: #9f1239;">Add tags to categorize your review</p>
+        </div>
+        <div class="mb-6"><label class="flex items-center gap-3 cursor-pointer"> <input type="checkbox" id="has-spoilers" class="w-5 h-5 rounded cursor-pointer" style="accent-color: #e11d48;"> <span class="text-sm font-medium font-bubble" style="color: #881337;">⚠️ This review contains spoilers</span> </label>
+        </div><button type="submit" id="submit-btn" class="w-full py-4 rounded-full font-bubble font-bold text-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3" style="background-color: #e11d48; color: #fff1f2;"> <span id="submit-text">post it!</span> <span id="submit-spinner" class="loading-spinner hidden"></span> </button>
+       </form>
+      </div><!-- Reviews Display -->
+      <div>
+       <div class="flex items-center justify-between mb-8">
+        <h2 class="font-display text-4xl font-bold" style="color: #881337;">recent reviews</h2><span id="review-count" class="text-lg font-bubble font-bold px-4 py-2 rounded-full" style="background-color: #fb7185; color: #fff1f2;">0 reviews</span>
+       </div>
+       <div id="reviews-container" class="grid gap-6">
+        <div class="text-center py-16">
+         <p class="text-xl mb-2">No reviews yet</p>
+         <p>Be the first to share your thoughts!</p>
+        </div>
+       </div>
+      </div>
+     </div><!-- How To View -->
+     <div id="howto-view" class="hidden">
+      <div class="max-w-3xl mx-auto">
+       <div class="p-8 rounded-2xl shadow-lg mb-8" style="background-color: #fff1f2;">
+        <h2 class="font-display text-4xl font-bold mb-6 text-center" style="color: #881337;">💡 how to write great reviews</h2>
+        <div class="space-y-6">
+         <div class="p-6 rounded-xl" style="background-color: rgba(251, 113, 133, 0.1);">
+          <h3 class="font-display text-2xl font-bold mb-3" style="color: #881337;">📝 be honest but kind</h3>
+          <p class="font-bubble leading-relaxed" style="color: #881337;">share ur true thoughts!!! whether they be negative, positive, or just neutral, feel free to express all your opinions on each book. it is okay to be critical, but please refrain from making personal attacks.</p>
+         </div>
+         <div class="p-6 rounded-xl" style="background-color: rgba(251, 113, 133, 0.1);">
+          <h3 class="font-display text-2xl font-bold mb-3" style="color: #881337;">🏷️ tag thoughtfully</h3>
+          <p class="font-bubble leading-relaxed mb-3" style="color: #881337;">tags help others find books they'll enjoy! always start with fiction or nonfiction, then add genre tags (romance, mystery, fantasy), mood tags (cozy, dark, heartwarming), or content tags (plot-twist, slow-burn)</p>
+          <p class="font-bubble text-sm mb-2" style="color: #9f1239;"><strong>fiction examples:</strong> fiction, fantasy, ya, enemies-to-lovers, found-family, page-turner</p>
+          <p class="font-bubble text-sm" style="color: #9f1239;"><strong>nonfiction examples:</strong> nonfiction, memoir, self-help, history, biography, educational</p>
+         </div>
+         <div class="p-6 rounded-xl" style="background-color: rgba(251, 113, 133, 0.1);">
+          <h3 class="font-display text-2xl font-bold mb-3" style="color: #881337;">✨ what to include</h3>
+          <ul class="space-y-2 font-bubble" style="color: #881337;">
+           <li>• what u loved (or didn't love) about it</li>
+           <li>• the vibes &amp; pacing</li>
+           <li>• characters &amp; how they made u feel</li>
+           <li>• who would enjoy this book</li>
+           <li>• anything unique or special about it</li>
+          </ul>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div><!-- Browse View -->
+     <div id="browse-view">
+      <div class="mb-8">
+       <div class="mb-6">
+        <div class="flex items-center justify-between mb-4">
+         <h2 class="font-display text-4xl font-bold" style="color: #881337;">find ur next read</h2><select id="sort-select" class="px-4 py-2 rounded-full border-2 font-bubble font-bold focus:outline-none focus:ring-2" style="border-color: #fb7185; color: #881337; background-color: #fff1f2;"> <option value="rating">Sort by Rating</option> <option value="recent">Sort by Recent</option> <option value="title">Sort by Title</option> </select>
+        </div>
+        <div>
+         <p class="text-sm font-bubble mb-2" style="color: #881337;">Filter by tags (click to toggle):</p>
+         <div id="tag-filter-buttons" class="flex flex-wrap gap-2"></div>
+        </div>
+       </div>
+       <div id="books-container" class="grid gap-6"></div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      background_color: "#ffe4e6",
+      surface_color: "#fff1f2",
+      text_color: "#881337",
+      primary_action_color: "#e11d48",
+      secondary_action_color: "#fb7185",
+      font_family: "Lazydog",
+      font_size: 16,
+      page_title: "BOOKAS",
+      page_subtitle: "rate ur fave books!!",
+      submit_button_text: "post it!"
+    };
+
+    let currentRating = 0;
+    let editRating = 0;
+    let allData = []; // All data including users and reviews
+    let currentUser = null; // { username: "..." }
+    let currentView = 'browse';
+    let currentFilters = new Set(); // Multiple tags can be selected
+    let currentSort = 'rating';
+    let allBookTitles = new Set();
+    let allTags = new Set();
+
+    // Get reviews from all data
+    function getReviews() {
+      return allData
+        .filter(item => item.record_type === 'review')
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+
+    // Get users from all data
+    function getUsers() {
+      return allData.filter(item => item.record_type === 'user');
+    }
+
+    // Check if user owns this review
+    function canDeleteReview(review) {
+      return currentUser && review.username === currentUser.username;
+    }
+
+    const dataHandler = {
+      onDataChanged(data) {
+        allData = data;
+        const reviews = getReviews();
+        
+        // Update book titles and tags for autocomplete
+        allBookTitles.clear();
+        allTags.clear();
+        reviews.forEach(review => {
+          allBookTitles.add(review.book_title);
+          if (review.tags) {
+            review.tags.split(',').forEach(tag => {
+              const trimmed = tag.trim();
+              if (trimmed) allTags.add(trimmed);
+            });
+          }
+        });
+        
+        updateFilterOptions();
+        renderReviews();
+        if (currentView === 'browse') {
+          renderBrowseView();
+        }
+      }
+    };
+
+    function renderReviews() {
+      const reviews = getReviews();
+      const container = document.getElementById('reviews-container');
+      const countElement = document.getElementById('review-count');
+      
+      countElement.textContent = `${reviews.length} review${reviews.length !== 1 ? 's' : ''}`;
+      
+      if (reviews.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16">
+            <p class="text-xl mb-2 font-bubble" style="color: ${window.elementSdk.config.text_color}">no reviews yet!</p>
+            <p class="font-bubble" style="color: ${window.elementSdk.config.text_color}">be the first to share ur thoughts 📖</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = reviews.map(review => {
+        const tags = review.tags ? review.tags.split(',').map(t => t.trim()).filter(t => t) : [];
+        const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+        const date = new Date(review.created_at).toLocaleString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+        const isOwner = canDeleteReview(review);
+        
+        return `
+          <div class="review-card p-6 rounded-2xl shadow-md" style="background-color: ${window.elementSdk.config.surface_color}">
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex-1">
+                <h3 class="font-display text-2xl font-bold mb-1" style="color: ${window.elementSdk.config.text_color}">${escapeHtml(review.book_title)}</h3>
+                <p class="text-lg mb-2 font-bubble" style="color: ${window.elementSdk.config.text_color}; opacity: 0.8">by ${escapeHtml(review.author)}</p>
+                <div class="text-2xl mb-2" style="color: ${window.elementSdk.config.secondary_action_color}">${stars}</div>
+              </div>
+              ${isOwner ? `
+                <div class="flex gap-2">
+                  <button class="edit-btn px-4 py-2 rounded-full text-sm font-bold font-bubble transition-all hover:opacity-80" 
+                          style="background-color: ${window.elementSdk.config.primary_action_color}; color: ${window.elementSdk.config.surface_color}"
+                          data-id="${review.__backendId}">edit</button>
+                  <button class="delete-btn px-4 py-2 rounded-full text-sm font-bold font-bubble transition-all hover:opacity-80" 
+                          style="background-color: ${window.elementSdk.config.secondary_action_color}; color: ${window.elementSdk.config.surface_color}"
+                          data-id="${review.__backendId}">delete</button>
+                </div>
+              ` : ''}
+            </div>
+            
+            ${review.has_spoilers ? `
+              <div class="mb-4 p-4 rounded-lg text-center" style="background-color: rgba(0, 0, 0, 0.05);">
+                <p class="font-bold font-bubble text-sm mb-2" style="color: ${window.elementSdk.config.text_color}">⚠️ spoiler warning</p>
+                <button class="show-spoiler-btn px-4 py-2 rounded-full font-bubble text-sm font-bold transition-all" 
+                        style="background-color: ${window.elementSdk.config.secondary_action_color}; color: ${window.elementSdk.config.surface_color}"
+                        data-id="${review.__backendId}">
+                  show review
+                </button>
+                <p class="hidden spoiler-${review.__backendId} mt-3 leading-relaxed font-bubble" style="color: ${window.elementSdk.config.text_color}">${censorText(review.review_text)}</p>
+              </div>
+            ` : `
+              <p class="mb-4 leading-relaxed font-bubble" style="color: ${window.elementSdk.config.text_color}">${censorText(review.review_text)}</p>
+            `}
+            
+            ${tags.length > 0 ? `
+              <div class="flex flex-wrap gap-2 mb-4">
+                ${tags.map(tag => `
+                  <span class="tag-chip px-3 py-1 rounded-full text-sm font-bold font-bubble" 
+                        style="background-color: ${window.elementSdk.config.secondary_action_color}; color: ${window.elementSdk.config.surface_color}">
+                    ${escapeHtml(tag)}
+                  </span>
+                `).join('')}
+              </div>
+            ` : ''}
+            
+            <div class="flex justify-between items-center text-sm pt-4 border-t-2 font-bubble" style="border-color: ${window.elementSdk.config.secondary_action_color}; opacity: 0.7; color: ${window.elementSdk.config.text_color}">
+              <span>👤 ${escapeHtml(review.username)}</span>
+              <div class="text-right">
+                <div>${date}</div>
+                ${review.last_edited ? `<div class="text-xs mt-1">edited ${new Date(review.last_edited).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}</div>` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.target.dataset.id;
+          const review = allData.find(r => r.__backendId === id);
+          if (!review || !canDeleteReview(review)) return;
+
+          // Show edit modal
+          showEditModal(review);
+        });
+      });
+
+      document.querySelectorAll('.delete-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const id = e.target.dataset.id;
+          const review = allData.find(r => r.__backendId === id);
+          if (!review || !canDeleteReview(review)) return;
+
+          e.target.disabled = true;
+          e.target.textContent = 'deleting...';
+
+          const result = await window.dataSdk.delete(review);
+          if (!result.isOk) {
+            e.target.disabled = false;
+            e.target.textContent = 'delete';
+            showToast('failed to delete review. plz try again.');
+          }
+        });
+      });
+
+      document.querySelectorAll('.show-spoiler-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.target.dataset.id;
+          const spoilerText = document.querySelector(`.spoiler-${id}`);
+          if (spoilerText) {
+            spoilerText.classList.toggle('hidden');
+            e.target.textContent = spoilerText.classList.contains('hidden') ? 'show review' : 'hide review';
+          }
+        });
+      });
+    }
+
+    async function onConfigChange(config) {
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const baseFontStack = 'serif';
+      
+      document.getElementById('app-wrapper').style.backgroundColor = config.background_color || defaultConfig.background_color;
+      document.getElementById('page-title').textContent = config.page_title || defaultConfig.page_title;
+      document.getElementById('page-subtitle').textContent = config.page_subtitle || defaultConfig.page_subtitle;
+      document.getElementById('submit-text').textContent = config.submit_button_text || defaultConfig.submit_button_text;
+      
+      document.getElementById('page-title').style.fontFamily = 'Lazydog, cursive';
+      document.getElementById('page-title').style.fontSize = `${baseSize * 3.75}px`;
+      document.getElementById('page-title').style.color = config.text_color || defaultConfig.text_color;
+      
+      document.getElementById('page-subtitle').style.fontSize = `${baseSize * 1.25}px`;
+      document.getElementById('page-subtitle').style.color = config.text_color || defaultConfig.text_color;
+      document.getElementById('page-subtitle').style.fontFamily = `'Comic Sans MS', cursive, sans-serif`;
+      
+      document.querySelectorAll('label').forEach(el => {
+        el.style.color = config.text_color || defaultConfig.text_color;
+        el.style.fontSize = `${baseSize * 0.875}px`;
+      });
+      
+      document.querySelectorAll('input, textarea').forEach(el => {
+        el.style.borderColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+        el.style.color = config.text_color || defaultConfig.text_color;
+      });
+      
+      document.querySelectorAll('.star').forEach(el => {
+        el.style.color = config.secondary_action_color || defaultConfig.secondary_action_color;
+      });
+      
+      const submitBtn = document.getElementById('submit-btn');
+      if (submitBtn) {
+        submitBtn.style.backgroundColor = config.primary_action_color || defaultConfig.primary_action_color;
+        submitBtn.style.color = config.surface_color || defaultConfig.surface_color;
+      }
+      
+      const reviewCount = document.getElementById('review-count');
+      if (reviewCount) {
+        reviewCount.style.backgroundColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+        reviewCount.style.color = config.surface_color || defaultConfig.surface_color;
+        reviewCount.style.fontSize = `${baseSize * 1.125}px`;
+      }
+      
+      document.querySelectorAll('h2, h3').forEach(el => {
+        el.style.fontFamily = `'Lazydog', 'Comic Sans MS', cursive`;
+        el.style.color = config.text_color || defaultConfig.text_color;
+      });
+      
+      const sortSelect = document.getElementById('sort-select');
+      if (sortSelect) {
+        sortSelect.style.borderColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+        sortSelect.style.color = config.text_color || defaultConfig.text_color;
+        sortSelect.style.backgroundColor = config.surface_color || defaultConfig.surface_color;
+      }
+      
+      updateFilterOptions();
+      
+      updateTabStyles();
+      renderReviews();
+      if (currentView === 'browse') {
+        renderBrowseView();
+      }
+    }
+    
+    function updateTabStyles() {
+      const submitTab = document.getElementById('tab-submit');
+      const browseTab = document.getElementById('tab-browse');
+      const howtoTab = document.getElementById('tab-howto');
+      
+      if (!submitTab || !browseTab || !howtoTab) return;
+      
+      // Reset all tabs to secondary color
+      submitTab.style.backgroundColor = window.elementSdk.config.secondary_action_color || defaultConfig.secondary_action_color;
+      submitTab.style.color = window.elementSdk.config.surface_color || defaultConfig.surface_color;
+      browseTab.style.backgroundColor = window.elementSdk.config.secondary_action_color || defaultConfig.secondary_action_color;
+      browseTab.style.color = window.elementSdk.config.surface_color || defaultConfig.surface_color;
+      howtoTab.style.backgroundColor = window.elementSdk.config.secondary_action_color || defaultConfig.secondary_action_color;
+      howtoTab.style.color = window.elementSdk.config.surface_color || defaultConfig.surface_color;
+      
+      // Highlight active tab
+      if (currentView === 'submit') {
+        submitTab.style.backgroundColor = window.elementSdk.config.primary_action_color || defaultConfig.primary_action_color;
+      } else if (currentView === 'browse') {
+        browseTab.style.backgroundColor = window.elementSdk.config.primary_action_color || defaultConfig.primary_action_color;
+      } else if (currentView === 'howto') {
+        howtoTab.style.backgroundColor = window.elementSdk.config.primary_action_color || defaultConfig.primary_action_color;
+      }
+    }
+    
+    function updateFilterOptions() {
+      const tagFilterContainer = document.getElementById('tag-filter-buttons');
+      if (!tagFilterContainer) return;
+      
+      if (allTags.size === 0) {
+        tagFilterContainer.innerHTML = '<p class="text-sm font-bubble" style="color: #881337; opacity: 0.6;">no tags yet</p>';
+        return;
+      }
+      
+      tagFilterContainer.innerHTML = Array.from(allTags).sort().map(tag => {
+        const isActive = currentFilters.has(tag);
+        return `
+          <button class="tag-filter-btn px-4 py-2 rounded-full text-sm font-bold font-bubble transition-all" 
+                  style="background-color: ${isActive ? window.elementSdk.config.primary_action_color || defaultConfig.primary_action_color : window.elementSdk.config.secondary_action_color || defaultConfig.secondary_action_color}; 
+                         color: ${window.elementSdk.config.surface_color || defaultConfig.surface_color};
+                         ${isActive ? 'box-shadow: 0 0 0 3px rgba(136, 19, 55, 0.3);' : ''}"
+                  data-tag="${escapeHtml(tag)}">
+            ${isActive ? '✓ ' : ''}${escapeHtml(tag)}
+          </button>
+        `;
+      }).join('');
+      
+      // Add click handlers
+      tagFilterContainer.querySelectorAll('.tag-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const tag = btn.dataset.tag;
+          if (currentFilters.has(tag)) {
+            currentFilters.delete(tag);
+          } else {
+            currentFilters.add(tag);
+          }
+          updateFilterOptions();
+          renderBrowseView();
+        });
+      });
+    }
+    
+    function renderBrowseView() {
+      const reviews = getReviews();
+      const container = document.getElementById('books-container');
+      if (!container) return;
+      
+      // Group reviews by book
+      const bookMap = new Map();
+      reviews.forEach(review => {
+        if (!bookMap.has(review.book_title)) {
+          bookMap.set(review.book_title, {
+            title: review.book_title,
+            author: review.author,
+            reviews: [],
+            avgRating: 0,
+            tags: new Set()
+          });
+        }
+        const book = bookMap.get(review.book_title);
+        book.reviews.push(review);
+        if (review.tags) {
+          review.tags.split(',').forEach(tag => {
+            const trimmed = tag.trim();
+            if (trimmed) book.tags.add(trimmed);
+          });
+        }
+      });
+      
+      // Calculate average ratings
+      bookMap.forEach(book => {
+        const sum = book.reviews.reduce((acc, r) => acc + r.rating, 0);
+        book.avgRating = sum / book.reviews.length;
+      });
+      
+      // Filter books by selected tags (must have ALL selected tags)
+      let filteredBooks = Array.from(bookMap.values());
+      if (currentFilters.size > 0) {
+        filteredBooks = filteredBooks.filter(book => {
+          // Book must have ALL selected tags
+          return Array.from(currentFilters).every(filterTag => book.tags.has(filterTag));
+        });
+      }
+      
+      // Sort based on selected option
+      if (currentSort === 'rating') {
+        filteredBooks.sort((a, b) => b.avgRating - a.avgRating);
+      } else if (currentSort === 'recent') {
+        filteredBooks.sort((a, b) => {
+          const latestA = Math.max(...a.reviews.map(r => new Date(r.created_at).getTime()));
+          const latestB = Math.max(...b.reviews.map(r => new Date(r.created_at).getTime()));
+          return latestB - latestA;
+        });
+      } else if (currentSort === 'title') {
+        filteredBooks.sort((a, b) => a.title.localeCompare(b.title));
+      }
+      
+      if (filteredBooks.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16">
+            <p class="text-xl mb-2 font-bubble" style="color: ${window.elementSdk.config.text_color}">no books here yet!</p>
+            <p class="font-bubble" style="color: ${window.elementSdk.config.text_color}">${currentFilters.size === 0 ? 'be the first to review 📚' : 'try removing some filters'}</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = filteredBooks.map(book => {
+        const stars = '★'.repeat(Math.round(book.avgRating)) + '☆'.repeat(5 - Math.round(book.avgRating));
+        const tagsArray = Array.from(book.tags);
+        
+        return `
+          <div class="review-card p-6 rounded-2xl shadow-md" style="background-color: ${window.elementSdk.config.surface_color}">
+            <div class="mb-4">
+              <h3 class="font-display text-3xl font-bold mb-2" style="color: ${window.elementSdk.config.text_color}">${escapeHtml(book.title)}</h3>
+              <p class="text-lg mb-2 font-bubble" style="color: ${window.elementSdk.config.text_color}; opacity: 0.8">by ${escapeHtml(book.author)}</p>
+              <div class="flex items-center gap-3 mb-3">
+                <div class="text-2xl" style="color: ${window.elementSdk.config.secondary_action_color}">${stars}</div>
+                <span class="text-lg font-bold font-bubble" style="color: ${window.elementSdk.config.text_color}">${book.avgRating.toFixed(1)} / 5.0</span>
+                <span class="text-sm font-bubble" style="color: ${window.elementSdk.config.text_color}; opacity: 0.7">(${book.reviews.length} review${book.reviews.length !== 1 ? 's' : ''})</span>
+              </div>
+              ${tagsArray.length > 0 ? `
+                <div class="flex flex-wrap gap-2 mb-4">
+                  ${tagsArray.map(tag => `
+                    <span class="tag-chip px-3 py-1 rounded-full text-sm font-bold font-bubble" 
+                          style="background-color: ${window.elementSdk.config.secondary_action_color}; color: ${window.elementSdk.config.surface_color}">
+                      ${escapeHtml(tag)}
+                    </span>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
+            
+            <div class="space-y-4 pt-4 border-t-2" style="border-color: ${window.elementSdk.config.secondary_action_color}">
+              <h4 class="font-bold text-lg mb-3 font-bubble" style="color: ${window.elementSdk.config.text_color}">reviews:</h4>
+              ${book.reviews.map(review => {
+                const reviewStars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+                const date = new Date(review.created_at).toLocaleString('en-US', { 
+                  year: 'numeric', 
+                  month: 'short', 
+                  day: 'numeric',
+                  hour: 'numeric',
+                  minute: '2-digit',
+                  hour12: true
+                });
+                return `
+                  <div class="pl-4 py-3 border-l-4 rounded" style="border-color: ${window.elementSdk.config.secondary_action_color}">
+                    <div class="flex justify-between items-start mb-2">
+                      <div class="flex items-center gap-2">
+                        <span class="font-bold font-bubble" style="color: ${window.elementSdk.config.text_color}">${escapeHtml(review.username)}</span>
+                        <span class="text-lg" style="color: ${window.elementSdk.config.secondary_action_color}">${reviewStars}</span>
+                      </div>
+                      <div class="text-right">
+                        <div class="text-sm font-bubble" style="color: ${window.elementSdk.config.text_color}; opacity: 0.6">${date}</div>
+                        ${review.last_edited ? `<div class="text-xs font-bubble mt-1" style="color: ${window.elementSdk.config.text_color}; opacity: 0.5;">edited</div>` : ''}
+                      </div>
+                    </div>
+                    ${review.has_spoilers ? `
+                      <div class="mb-2 p-3 rounded-lg text-center" style="background-color: rgba(0, 0, 0, 0.05);">
+                        <p class="font-bold font-bubble text-sm mb-1" style="color: ${window.elementSdk.config.text_color}">⚠️ spoiler warning</p>
+                        <button class="show-spoiler-browse-btn px-3 py-1 rounded-full font-bubble text-xs font-bold transition-all" 
+                                style="background-color: ${window.elementSdk.config.secondary_action_color}; color: ${window.elementSdk.config.surface_color}"
+                                data-id="${review.__backendId}">
+                          show
+                        </button>
+                        <p class="hidden spoiler-browse-${review.__backendId} mt-2 leading-relaxed font-bubble text-sm" style="color: ${window.elementSdk.config.text_color}">${censorText(review.review_text)}</p>
+                      </div>
+                    ` : `
+                      <p class="leading-relaxed font-bubble" style="color: ${window.elementSdk.config.text_color}">${censorText(review.review_text)}</p>
+                    `}
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      // Add spoiler button handlers for browse view
+      document.querySelectorAll('.show-spoiler-browse-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = e.target.dataset.id;
+          const spoilerText = document.querySelector(`.spoiler-browse-${id}`);
+          if (spoilerText) {
+            spoilerText.classList.toggle('hidden');
+            e.target.textContent = spoilerText.classList.contains('hidden') ? 'show' : 'hide';
+          }
+        });
+      });
+    }
+
+    // Star rating handlers
+    document.querySelectorAll('.star').forEach((star, index) => {
+      star.addEventListener('click', () => {
+        currentRating = parseInt(star.dataset.rating);
+        document.getElementById('rating-value').value = currentRating;
+        updateStars();
+      });
+      
+      star.addEventListener('mouseenter', () => {
+        const rating = parseInt(star.dataset.rating);
+        document.querySelectorAll('.star').forEach((s, i) => {
+          s.textContent = i < rating ? '★' : '☆';
+        });
+      });
+    });
+
+    document.getElementById('star-rating').addEventListener('mouseleave', updateStars);
+
+    function updateStars() {
+      document.querySelectorAll('.star').forEach((star, index) => {
+        star.textContent = index < currentRating ? '★' : '☆';
+      });
+    }
+
+    function updateEditStars() {
+      document.querySelectorAll('.edit-star').forEach((star, index) => {
+        star.textContent = index < editRating ? '★' : '☆';
+      });
+    }
+
+    function showEditModal(review) {
+      editRating = review.rating;
+      
+      document.getElementById('edit-review-id').value = review.__backendId;
+      document.getElementById('edit-book-title').value = review.book_title;
+      document.getElementById('edit-author').value = review.author;
+      document.getElementById('edit-rating-value').value = review.rating;
+      document.getElementById('edit-review-text').value = review.review_text;
+      document.getElementById('edit-tags').value = review.tags || '';
+      document.getElementById('edit-has-spoilers').checked = review.has_spoilers || false;
+      
+      updateEditStars();
+      
+      document.getElementById('edit-modal').classList.remove('hidden');
+    }
+
+    // Login form
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('login-username').value.trim();
+      const password = document.getElementById('login-password').value;
+      const errorDiv = document.getElementById('login-error');
+      const submitBtn = document.getElementById('login-submit-btn');
+      const submitText = document.getElementById('login-submit-text');
+      const spinner = document.getElementById('login-spinner');
+      
+      submitBtn.disabled = true;
+      submitText.textContent = 'logging in...';
+      spinner.classList.remove('hidden');
+      errorDiv.classList.add('hidden');
+      
+      try {
+        const users = getUsers();
+        const user = users.find(u => u.username === username);
+        
+        if (!user) {
+          errorDiv.textContent = 'Username not found!';
+          errorDiv.classList.remove('hidden');
+          return;
+        }
+        
+        if (user.password !== password) {
+          errorDiv.textContent = 'Wrong password!';
+          errorDiv.classList.remove('hidden');
+          return;
+        }
+        
+        // Login successful
+        currentUser = { username: user.username };
+        document.getElementById('login-modal').classList.add('hidden');
+        document.getElementById('login-form').reset();
+        updateUserStatus();
+        showToast(`Welcome back, ${username}! 👋`);
+        
+      } catch (error) {
+        errorDiv.textContent = 'login failed. try again!';
+        errorDiv.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitText.textContent = 'login!';
+        spinner.classList.add('hidden');
+      }
+    });
+
+    // Signup form
+    document.getElementById('signup-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (allData.filter(d => d.record_type === 'user').length >= 100) {
+        showToast('user limit reached (100 users max)');
+        return;
+      }
+      
+      const username = document.getElementById('signup-username').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const errorDiv = document.getElementById('signup-error');
+      const submitBtn = document.getElementById('signup-submit-btn');
+      const submitText = document.getElementById('signup-submit-text');
+      const spinner = document.getElementById('signup-spinner');
+      
+      submitBtn.disabled = true;
+      submitText.textContent = 'creating...';
+      spinner.classList.remove('hidden');
+      errorDiv.classList.add('hidden');
+      
+      try {
+        const users = getUsers();
+        
+        if (users.find(u => u.username === username)) {
+          errorDiv.textContent = 'Username taken! Try another.';
+          errorDiv.classList.remove('hidden');
+          submitBtn.disabled = false;
+          submitText.textContent = 'create account!';
+          spinner.classList.add('hidden');
+          return;
+        }
+        
+        const userData = {
+          record_type: 'user',
+          username: username,
+          password: password,
+          created_at: new Date().toISOString(),
+          book_title: '',
+          author: '',
+          rating: 0,
+          review_text: '',
+          tags: '',
+          has_spoilers: false,
+          last_edited: ''
+        };
+        
+        const result = await window.dataSdk.create(userData);
+        
+        if (result.isOk) {
+          currentUser = { username: username };
+          document.getElementById('signup-modal').classList.add('hidden');
+          document.getElementById('signup-form').reset();
+          updateUserStatus();
+          showToast(`account created! welcome ${username}! 🎉`);
+        } else {
+          console.error('Data SDK create error:', result.error);
+          errorDiv.textContent = `Failed: ${result.error?.message || 'Unknown error'}`;
+          errorDiv.classList.remove('hidden');
+        }
+        
+      } catch (error) {
+        console.error('Signup exception:', error);
+        errorDiv.textContent = 'signup failed. try again!';
+        errorDiv.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitText.textContent = 'create account!';
+        spinner.classList.add('hidden');
+      }
+    });
+
+    // Review form
+    document.getElementById('review-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const reviews = getReviews();
+      if (reviews.length >= 899) {
+        showToast('review limit reached. plz delete some reviews first.');
+        return;
+      }
+      
+      if (!currentRating) {
+        showToast('plz select a rating');
+        return;
+      }
+      
+      const submitBtn = document.getElementById('submit-btn');
+      const submitText = document.getElementById('submit-text');
+      const submitSpinner = document.getElementById('submit-spinner');
+      
+      submitBtn.disabled = true;
+      submitText.textContent = 'submitting...';
+      submitSpinner.classList.remove('hidden');
+      
+      const reviewData = {
+        record_type: 'review',
+        username: currentUser.username,
+        password: '',
+        book_title: document.getElementById('book-title').value,
+        author: document.getElementById('author').value,
+        rating: currentRating,
+        review_text: document.getElementById('review-text').value,
+        tags: document.getElementById('tags').value,
+        has_spoilers: document.getElementById('has-spoilers').checked,
+        last_edited: '',
+        created_at: new Date().toISOString()
+      };
+      
+      try {
+        const result = await window.dataSdk.create(reviewData);
+        
+        if (result.isOk) {
+          e.target.reset();
+          currentRating = 0;
+          updateStars();
+          showToast('review submitted successfully!');
+        } else {
+          showToast('failed to submit review. plz try again.');
+        }
+      } catch (error) {
+        showToast('failed to submit review. plz try again.');
+      } finally {
+        submitBtn.disabled = false;
+        submitText.textContent = window.elementSdk?.config?.submit_button_text || defaultConfig.submit_button_text;
+        submitSpinner.classList.add('hidden');
+      }
+    });
+
+    // Edit form
+    document.getElementById('edit-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      if (!editRating) {
+        showToast('plz select a rating');
+        return;
+      }
+      
+      const submitBtn = document.getElementById('edit-submit-btn');
+      const submitText = document.getElementById('edit-submit-text');
+      const spinner = document.getElementById('edit-spinner');
+      const errorDiv = document.getElementById('edit-error');
+      
+      submitBtn.disabled = true;
+      submitText.textContent = 'saving...';
+      spinner.classList.remove('hidden');
+      errorDiv.classList.add('hidden');
+      
+      const reviewId = document.getElementById('edit-review-id').value;
+      const review = allData.find(r => r.__backendId === reviewId);
+      
+      if (!review) {
+        errorDiv.textContent = 'Review not found!';
+        errorDiv.classList.remove('hidden');
+        submitBtn.disabled = false;
+        submitText.textContent = 'save changes';
+        spinner.classList.add('hidden');
+        return;
+      }
+      
+      // Update the review object
+      review.book_title = document.getElementById('edit-book-title').value;
+      review.author = document.getElementById('edit-author').value;
+      review.rating = editRating;
+      review.review_text = document.getElementById('edit-review-text').value;
+      review.tags = document.getElementById('edit-tags').value;
+      review.has_spoilers = document.getElementById('edit-has-spoilers').checked;
+      review.last_edited = new Date().toISOString();
+      
+      try {
+        const result = await window.dataSdk.update(review);
+        
+        if (result.isOk) {
+          document.getElementById('edit-modal').classList.add('hidden');
+          showToast('review updated successfully!');
+        } else {
+          errorDiv.textContent = 'Failed to update. Try again!';
+          errorDiv.classList.remove('hidden');
+        }
+      } catch (error) {
+        errorDiv.textContent = 'Failed to update. Try again!';
+        errorDiv.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitText.textContent = 'save changes';
+        spinner.classList.add('hidden');
+      }
+    });
+
+    // Modal controls
+    document.getElementById('show-login-btn').addEventListener('click', () => {
+      document.getElementById('login-modal').classList.remove('hidden');
+    });
+
+    document.getElementById('show-signup-btn').addEventListener('click', () => {
+      document.getElementById('signup-modal').classList.remove('hidden');
+    });
+
+    document.getElementById('cancel-login-btn').addEventListener('click', () => {
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('login-form').reset();
+      document.getElementById('login-error').classList.add('hidden');
+    });
+
+    document.getElementById('cancel-signup-btn').addEventListener('click', () => {
+      document.getElementById('signup-modal').classList.add('hidden');
+      document.getElementById('signup-form').reset();
+      document.getElementById('signup-error').classList.add('hidden');
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+      currentUser = null;
+      updateUserStatus();
+      showToast('logged out! see ya! 👋');
+    });
+
+    function updateUserStatus() {
+      if (currentUser) {
+        document.getElementById('logged-out-status').classList.add('hidden');
+        document.getElementById('logged-in-status').classList.remove('hidden');
+        document.getElementById('current-username').textContent = currentUser.username;
+        document.getElementById('submit-view').classList.remove('hidden');
+        document.getElementById('browse-view').classList.add('hidden');
+        document.getElementById('howto-view').classList.add('hidden');
+        currentView = 'submit';
+        renderReviews();
+      } else {
+        document.getElementById('logged-out-status').classList.remove('hidden');
+        document.getElementById('logged-in-status').classList.add('hidden');
+        document.getElementById('submit-view').classList.add('hidden');
+        document.getElementById('browse-view').classList.remove('hidden');
+        document.getElementById('howto-view').classList.add('hidden');
+        currentView = 'browse';
+        renderBrowseView();
+      }
+      updateTabStyles();
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.textContent = message;
+      toast.className = 'font-bubble';
+      toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: ${window.elementSdk.config.primary_action_color || defaultConfig.primary_action_color};
+        color: ${window.elementSdk.config.surface_color || defaultConfig.surface_color};
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 1000;
+        font-weight: 600;
+      `;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function censorText(text) {
+      // List of slurs to censor (partial list for demonstration)
+      const slurs = [
+        'nigger', 'nigga', 'faggot', 'fag', 'tranny', 'dyke', 'kike', 'spic', 'chink', 
+        'gook', 'wetback', 'beaner', 'raghead', 'towelhead', 'retard', 'retarded'
+      ];
+      
+      let censored = text;
+      slurs.forEach(slur => {
+        const regex = new RegExp(slur, 'gi');
+        censored = censored.replace(regex, (match) => {
+          return '*'.repeat(match.length);
+        });
+      });
+      
+      return escapeHtml(censored);
+    }
+    
+    async function initialize() {
+      // Initialize Data SDK FIRST before setting up event listeners
+      if (window.dataSdk) {
+        await window.dataSdk.init(dataHandler);
+      }
+      
+      if (window.elementSdk) {
+        await window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities: (config) => ({
+            recolorables: [
+              {
+                get: () => config.background_color || defaultConfig.background_color,
+                set: (value) => {
+                  config.background_color = value;
+                  window.elementSdk.setConfig({ background_color: value });
+                }
+              },
+              {
+                get: () => config.surface_color || defaultConfig.surface_color,
+                set: (value) => {
+                  config.surface_color = value;
+                  window.elementSdk.setConfig({ surface_color: value });
+                }
+              },
+              {
+                get: () => config.text_color || defaultConfig.text_color,
+                set: (value) => {
+                  config.text_color = value;
+                  window.elementSdk.setConfig({ text_color: value });
+                }
+              },
+              {
+                get: () => config.primary_action_color || defaultConfig.primary_action_color,
+                set: (value) => {
+                  config.primary_action_color = value;
+                  window.elementSdk.setConfig({ primary_action_color: value });
+                }
+              },
+              {
+                get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+                set: (value) => {
+                  config.secondary_action_color = value;
+                  window.elementSdk.setConfig({ secondary_action_color: value });
+                }
+              }
+            ],
+            borderables: [],
+            fontEditable: {
+              get: () => config.font_family || defaultConfig.font_family,
+              set: (value) => {
+                config.font_family = value;
+                window.elementSdk.setConfig({ font_family: value });
+              }
+            },
+            fontSizeable: {
+              get: () => config.font_size || defaultConfig.font_size,
+              set: (value) => {
+                config.font_size = value;
+                window.elementSdk.setConfig({ font_size: value });
+              }
+            }
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ["page_title", config.page_title || defaultConfig.page_title],
+            ["page_subtitle", config.page_subtitle || defaultConfig.page_subtitle],
+            ["submit_button_text", config.submit_button_text || defaultConfig.submit_button_text]
+          ])
+        });
+      }
+      
+      // Tab switching (only when logged in)
+      document.getElementById('tab-submit').addEventListener('click', () => {
+        if (!currentUser) return;
+        currentView = 'submit';
+        document.getElementById('submit-view').classList.remove('hidden');
+        document.getElementById('browse-view').classList.add('hidden');
+        document.getElementById('howto-view').classList.add('hidden');
+        updateTabStyles();
+      });
+      
+      document.getElementById('tab-browse').addEventListener('click', () => {
+        if (!currentUser) return;
+        currentView = 'browse';
+        document.getElementById('submit-view').classList.add('hidden');
+        document.getElementById('browse-view').classList.remove('hidden');
+        document.getElementById('howto-view').classList.add('hidden');
+        renderBrowseView();
+        updateTabStyles();
+      });
+      
+      document.getElementById('tab-howto').addEventListener('click', () => {
+        if (!currentUser) return;
+        currentView = 'howto';
+        document.getElementById('submit-view').classList.add('hidden');
+        document.getElementById('browse-view').classList.add('hidden');
+        document.getElementById('howto-view').classList.remove('hidden');
+        updateTabStyles();
+      });
+      
+      // Sort change
+      document.getElementById('sort-select').addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        renderBrowseView();
+      });
+      
+      // Autocomplete for book titles
+      const bookTitleInput = document.getElementById('book-title');
+      const bookTitleSuggestions = document.getElementById('book-title-suggestions');
+      
+      bookTitleInput.addEventListener('input', (e) => {
+        const value = e.target.value.toLowerCase();
+        if (!value) {
+          bookTitleSuggestions.classList.add('hidden');
+          return;
+        }
+        
+        const matches = Array.from(allBookTitles).filter(title => 
+          title.toLowerCase().includes(value)
+        );
+        
+        if (matches.length === 0) {
+          bookTitleSuggestions.classList.add('hidden');
+          return;
+        }
+        
+        bookTitleSuggestions.innerHTML = matches.map(title => `
+          <div class="suggestion-item px-4 py-2 cursor-pointer hover:bg-opacity-80 transition-colors font-bubble" 
+               style="background-color: ${window.elementSdk.config.surface_color}; color: ${window.elementSdk.config.text_color}"
+               data-value="${escapeHtml(title)}">
+            ${escapeHtml(title)}
+          </div>
+        `).join('');
+        
+        bookTitleSuggestions.style.backgroundColor = window.elementSdk.config.surface_color;
+        bookTitleSuggestions.style.border = `2px solid ${window.elementSdk.config.secondary_action_color}`;
+        bookTitleSuggestions.classList.remove('hidden');
+        
+        bookTitleSuggestions.querySelectorAll('.suggestion-item').forEach(item => {
+          item.addEventListener('click', () => {
+            bookTitleInput.value = item.dataset.value;
+            bookTitleSuggestions.classList.add('hidden');
+          });
+        });
+      });
+      
+      // Autocomplete for tags
+      const tagsInput = document.getElementById('tags');
+      const tagsSuggestions = document.getElementById('tags-suggestions');
+      
+      tagsInput.addEventListener('input', (e) => {
+        const value = e.target.value;
+        const lastComma = value.lastIndexOf(',');
+        const currentTag = lastComma >= 0 ? value.slice(lastComma + 1).trim() : value.trim();
+        
+        if (!currentTag) {
+          tagsSuggestions.classList.add('hidden');
+          return;
+        }
+        
+        const matches = Array.from(allTags).filter(tag => 
+          tag.toLowerCase().includes(currentTag.toLowerCase())
+        );
+        
+        if (matches.length === 0) {
+          tagsSuggestions.classList.add('hidden');
+          return;
+        }
+        
+        tagsSuggestions.innerHTML = matches.map(tag => `
+          <div class="suggestion-item px-4 py-2 cursor-pointer hover:bg-opacity-80 transition-colors font-bubble" 
+               style="background-color: ${window.elementSdk.config.surface_color}; color: ${window.elementSdk.config.text_color}"
+               data-value="${escapeHtml(tag)}">
+            ${escapeHtml(tag)}
+          </div>
+        `).join('');
+        
+        tagsSuggestions.style.backgroundColor = window.elementSdk.config.surface_color;
+        tagsSuggestions.style.border = `2px solid ${window.elementSdk.config.secondary_action_color}`;
+        tagsSuggestions.classList.remove('hidden');
+        
+        tagsSuggestions.querySelectorAll('.suggestion-item').forEach(item => {
+          item.addEventListener('click', () => {
+            const beforeLastComma = lastComma >= 0 ? value.slice(0, lastComma + 1) : '';
+            tagsInput.value = beforeLastComma + (beforeLastComma ? ' ' : '') + item.dataset.value + ', ';
+            tagsSuggestions.classList.add('hidden');
+            tagsInput.focus();
+          });
+        });
+      });
+      
+      // Close suggestions when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!bookTitleInput.contains(e.target) && !bookTitleSuggestions.contains(e.target)) {
+          bookTitleSuggestions.classList.add('hidden');
+        }
+        if (!tagsInput.contains(e.target) && !tagsSuggestions.contains(e.target)) {
+          tagsSuggestions.classList.add('hidden');
+        }
+      });
+      
+      // Close modals when clicking backdrop
+      document.getElementById('login-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'login-modal') {
+          document.getElementById('login-modal').classList.add('hidden');
+          document.getElementById('login-form').reset();
+          document.getElementById('login-error').classList.add('hidden');
+        }
+      });
+      
+      document.getElementById('signup-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'signup-modal') {
+          document.getElementById('signup-modal').classList.add('hidden');
+          document.getElementById('signup-form').reset();
+          document.getElementById('signup-error').classList.add('hidden');
+        }
+      });
+
+      document.getElementById('edit-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'edit-modal') {
+          document.getElementById('edit-modal').classList.add('hidden');
+          document.getElementById('edit-form').reset();
+          document.getElementById('edit-error').classList.add('hidden');
+        }
+      });
+
+      document.getElementById('cancel-edit-btn').addEventListener('click', () => {
+        document.getElementById('edit-modal').classList.add('hidden');
+        document.getElementById('edit-form').reset();
+        document.getElementById('edit-error').classList.add('hidden');
+      });
+
+      // Edit star rating
+      document.querySelectorAll('.edit-star').forEach((star, index) => {
+        star.addEventListener('click', () => {
+          editRating = parseInt(star.dataset.rating);
+          document.getElementById('edit-rating-value').value = editRating;
+          updateEditStars();
+        });
+        
+        star.addEventListener('mouseenter', () => {
+          const rating = parseInt(star.dataset.rating);
+          document.querySelectorAll('.edit-star').forEach((s, i) => {
+            s.textContent = i < rating ? '★' : '☆';
+          });
+        });
+      });
+
+      document.getElementById('edit-star-rating').addEventListener('mouseleave', updateEditStars);
+      
+      updateUserStatus();
+    }
+
+    initialize();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9be62be8f01bf06f',t:'MTc2ODQ4ODQ4MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
