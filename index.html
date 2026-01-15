@@ -78,15 +78,15 @@
       <p id="page-subtitle" class="text-xl font-bubble" style="color: #9f1239;">rate ur fave books!!</p><!-- User Status -->
       <div id="user-status" class="mt-6">
        <div id="logged-out-status">
-        <p class="mb-4 font-bubble text-lg" style="color: #881337;">✨ welcome to bookas, ur cozy corner for sharing book reviews! create an account or login to start posting ur thoughts on ur favorite reads 📖💕</p>
-        <div class="flex gap-4 justify-center"><button id="show-login-btn" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #e11d48; color: #fff1f2;"> 🔑 login </button> <button id="show-signup-btn" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #fb7185; color: #fff1f2;"> ✍️ sign up </button>
+        <p class="mb-4 font-bubble text-lg" style="color: #881337;">✨ welcome to BOOKAS, ur cozy corner for sharing book reviews! create an account or log in to start posting ur favorite reads 📖💕</p>
+        <div class="flex gap-4 justify-center"><button id="show-login-btn" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #e11d48; color: #fff1f2;"> 🔑 log in </button> <button id="show-signup-btn" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #fb7185; color: #fff1f2;"> ✍️ sign up </button>
         </div>
        </div>
        <div id="logged-in-status" class="hidden">
         <div class="mb-4 inline-block px-6 py-3 rounded-full shadow-lg" style="background-color: rgba(251, 113, 133, 0.2); border: 3px solid #fb7185;">
          <p class="font-bubble font-bold" style="color: #881337;">hey <span id="current-username"></span>! 👋✨</p>
         </div>
-        <div class="flex gap-3 justify-center flex-wrap"><button id="tab-submit" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #e11d48; color: #fff1f2;"> ✍️ write review </button> <button id="tab-browse" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #fb7185; color: #fff1f2;"> 📚 browse books </button> <button id="tab-howto" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #fb7185; color: #fff1f2;"> 💡 how to review </button> <button id="logout-btn" class="px-6 py-3 rounded-full font-bubble text-sm font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #881337; color: #fff1f2;"> logout </button>
+        <div class="flex gap-3 justify-center flex-wrap"><button id="tab-submit" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #e11d48; color: #fff1f2;"> ✍️ write review </button> <button id="tab-browse" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #fb7185; color: #fff1f2;"> 📚 browse books </button> <button id="tab-howto" class="px-8 py-3 rounded-full font-bubble text-lg font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #fb7185; color: #fff1f2;"> 💡 review guide </button> <button id="logout-btn" class="px-6 py-3 rounded-full font-bubble text-sm font-bold transition-all shadow-lg hover:shadow-xl" style="background-color: #881337; color: #fff1f2;"> log out </button>
         </div>
        </div>
       </div>
@@ -95,7 +95,7 @@
     <div class="max-w-6xl mx-auto px-6 pb-16"><!-- Login Modal -->
      <div id="login-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background-color: rgba(0, 0, 0, 0.5);">
       <div class="w-full max-w-md p-8 rounded-2xl shadow-2xl" style="background-color: #fff1f2;">
-       <h2 class="font-display text-3xl font-bold mb-6 text-center" style="color: #881337;">login 🔑</h2>
+       <h2 class="font-display text-3xl font-bold mb-6 text-center" style="color: #881337;">log in 🔑</h2>
        <form id="login-form">
         <div class="mb-4"><label for="login-username" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Username</label> <input type="text" id="login-username" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
         </div>
@@ -106,24 +106,24 @@
         </div>
        </form>
       </div>
-     </div><!-- Edit Review Modal -->
+     </div><!-- Edit Review Model -->
      <div id="edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4" style="background-color: rgba(0, 0, 0, 0.5);">
       <div class="w-full max-w-2xl p-8 rounded-2xl shadow-2xl" style="background-color: #fff1f2;">
        <h2 class="font-display text-3xl font-bold mb-6 text-center" style="color: #881337;">edit review ✏️</h2>
        <form id="edit-form"><input type="hidden" id="edit-review-id">
-        <div class="mb-4"><label for="edit-book-title" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Book Title</label> <input type="text" id="edit-book-title" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+        <div class="mb-4"><label for="edit-book-title" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">book title</label> <input type="text" id="edit-book-title" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
         </div>
-        <div class="mb-4"><label for="edit-author" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Author</label> <input type="text" id="edit-author" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+        <div class="mb-4"><label for="edit-author" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">author</label> <input type="text" id="edit-author" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
         </div>
-        <div class="mb-4"><label class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Rating</label>
+        <div class="mb-4"><label class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">rating</label>
          <div id="edit-star-rating" class="flex gap-2 text-4xl" style="color: #fb7185;"><span class="edit-star" data-rating="1">☆</span> <span class="edit-star" data-rating="2">☆</span> <span class="edit-star" data-rating="3">☆</span> <span class="edit-star" data-rating="4">☆</span> <span class="edit-star" data-rating="5">☆</span>
          </div><input type="hidden" id="edit-rating-value" required>
         </div>
-        <div class="mb-4"><label for="edit-review-text" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Your Review</label> <textarea id="edit-review-text" required rows="5" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all resize-none font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;"></textarea>
+        <div class="mb-4"><label for="edit-review-text" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">your review</label> <textarea id="edit-review-text" required rows="5" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all resize-none font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;"></textarea>
         </div>
         <div class="mb-4"><label for="edit-tags" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Tags (comma-separated)</label> <input type="text" id="edit-tags" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
         </div>
-        <div class="mb-6"><label class="flex items-center gap-3 cursor-pointer"> <input type="checkbox" id="edit-has-spoilers" class="w-5 h-5 rounded cursor-pointer" style="accent-color: #e11d48;"> <span class="text-sm font-medium font-bubble" style="color: #881337;">⚠️ This review contains spoilers</span> </label>
+        <div class="mb-6"><label class="flex items-center gap-3 cursor-pointer"> <input type="checkbox" id="edit-has-spoilers" class="w-5 h-5 rounded cursor-pointer" style="accent-color: #e11d48;"> <span class="text-sm font-medium font-bubble" style="color: #881337;">⚠️ this review contains spoilers!!</span> </label>
         </div>
         <div id="edit-error" class="hidden mb-4 p-3 rounded-lg text-center font-bubble font-bold" style="background-color: #fecdd3; color: #881337;"></div>
         <div class="flex gap-3"><button type="submit" id="edit-submit-btn" class="flex-1 py-3 rounded-full font-bubble font-bold text-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2" style="background-color: #e11d48; color: #fff1f2;"> <span id="edit-submit-text">save changes</span> <span id="edit-spinner" class="loading-spinner hidden"></span> </button> <button type="button" id="cancel-edit-btn" class="px-6 py-3 rounded-full font-bubble font-bold transition-all shadow-md hover:shadow-lg" style="background-color: #fb7185; color: #fff1f2;"> cancel </button>
@@ -135,10 +135,10 @@
       <div class="w-full max-w-md p-8 rounded-2xl shadow-2xl" style="background-color: #fff1f2;">
        <h2 class="font-display text-3xl font-bold mb-6 text-center" style="color: #881337;">sign up ✨</h2>
        <form id="signup-form">
-        <div class="mb-4"><label for="signup-username" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Choose Username</label> <input type="text" id="signup-username" required minlength="3" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+        <div class="mb-4"><label for="signup-username" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">choose username</label> <input type="text" id="signup-username" required minlength="3" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
          <p class="text-xs mt-1 font-bubble" style="color: #9f1239;">at least 3 characters</p>
         </div>
-        <div class="mb-6"><label for="signup-password" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Choose Password</label> <input type="password" id="signup-password" required minlength="4" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+        <div class="mb-6"><label for="signup-password" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">choose password</label> <input type="password" id="signup-password" required minlength="4" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
          <p class="text-xs mt-1 font-bubble" style="color: #9f1239;">at least 4 characters</p>
         </div>
         <div id="signup-error" class="hidden mb-4 p-3 rounded-lg text-center font-bubble font-bold" style="background-color: #fecdd3; color: #881337;"></div>
@@ -149,24 +149,24 @@
      </div><!-- Submit View -->
      <div id="submit-view" class="hidden"><!-- Review Form -->
       <div class="mb-12 p-8 rounded-2xl shadow-lg" style="background-color: #fff1f2;">
-       <h2 class="font-display text-3xl font-bold mb-6" style="color: #881337;">Write a Review</h2>
+       <h2 class="font-display text-3xl font-bold mb-6" style="color: #881337;">write a review</h2>
        <form id="review-form">
         <div class="grid md:grid-cols-2 gap-6 mb-6">
-         <div class="relative"><label for="book-title" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Book Title</label> <input type="text" id="book-title" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+         <div class="relative"><label for="book-title" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">book title</label> <input type="text" id="book-title" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
           <div id="book-title-suggestions" class="hidden absolute top-full left-0 right-0 mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto z-10"></div>
          </div>
-         <div><label for="author" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Author</label> <input type="text" id="author" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
+         <div><label for="author" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">author</label> <input type="text" id="author" required class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
          </div>
         </div>
-        <div class="mb-6"><label class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Rating</label>
+        <div class="mb-6"><label class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">rating</label>
          <div id="star-rating" class="flex gap-2 text-4xl" style="color: #fb7185;"><span class="star" data-rating="1">☆</span> <span class="star" data-rating="2">☆</span> <span class="star" data-rating="3">☆</span> <span class="star" data-rating="4">☆</span> <span class="star" data-rating="5">☆</span>
          </div><input type="hidden" id="rating-value" required>
         </div>
-        <div class="mb-6"><label for="review-text" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Your Review</label> <textarea id="review-text" required rows="5" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all resize-none font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;"></textarea>
+        <div class="mb-6"><label for="review-text" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">your review</label> <textarea id="review-text" required rows="5" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all resize-none font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;"></textarea>
         </div>
         <div class="mb-6"><label for="tags" class="block text-sm font-medium mb-2 font-bubble" style="color: #881337;">Tags (comma-separated)</label> <input type="text" id="tags" placeholder="fiction, mystery, thriller" class="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 transition-all font-bubble" style="border-color: #fb7185; color: #881337; background-color: white;">
          <div id="tags-suggestions" class="hidden absolute top-full left-0 right-0 mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto z-10"></div>
-         <p class="text-sm mt-2 font-bubble" style="color: #9f1239;">Add tags to categorize your review</p>
+         <p class="text-sm mt-2 font-bubble" style="color: #9f1239;">add tags to categorize your review</p>
         </div>
         <div class="mb-6"><label class="flex items-center gap-3 cursor-pointer"> <input type="checkbox" id="has-spoilers" class="w-5 h-5 rounded cursor-pointer" style="accent-color: #e11d48;"> <span class="text-sm font-medium font-bubble" style="color: #881337;">⚠️ This review contains spoilers</span> </label>
         </div><button type="submit" id="submit-btn" class="w-full py-4 rounded-full font-bubble font-bold text-lg transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3" style="background-color: #e11d48; color: #fff1f2;"> <span id="submit-text">post it!</span> <span id="submit-spinner" class="loading-spinner hidden"></span> </button>
@@ -178,8 +178,8 @@
        </div>
        <div id="reviews-container" class="grid gap-6">
         <div class="text-center py-16">
-         <p class="text-xl mb-2">No reviews yet</p>
-         <p>Be the first to share your thoughts!</p>
+         <p class="text-xl mb-2">no reviews yet!</p>
+         <p>be the first to share your thoughts!</p>
         </div>
        </div>
       </div>
@@ -187,7 +187,7 @@
      <div id="howto-view" class="hidden">
       <div class="max-w-3xl mx-auto">
        <div class="p-8 rounded-2xl shadow-lg mb-8" style="background-color: #fff1f2;">
-        <h2 class="font-display text-4xl font-bold mb-6 text-center" style="color: #881337;">💡 how to write great reviews</h2>
+        <h2 class="font-display text-4xl font-bold mb-6 text-center" style="color: #881337;">💡 review guide</h2>
         <div class="space-y-6">
          <div class="p-6 rounded-xl" style="background-color: rgba(251, 113, 133, 0.1);">
           <h3 class="font-display text-2xl font-bold mb-3" style="color: #881337;">📝 be honest but kind</h3>
@@ -206,7 +206,7 @@
            <li>• the vibes &amp; pacing</li>
            <li>• characters &amp; how they made u feel</li>
            <li>• who would enjoy this book</li>
-           <li>• anything unique or special about it</li>
+           <li>• anything unique or special about it!!</li>
           </ul>
          </div>
         </div>
@@ -217,10 +217,10 @@
       <div class="mb-8">
        <div class="mb-6">
         <div class="flex items-center justify-between mb-4">
-         <h2 class="font-display text-4xl font-bold" style="color: #881337;">find ur next read</h2><select id="sort-select" class="px-4 py-2 rounded-full border-2 font-bubble font-bold focus:outline-none focus:ring-2" style="border-color: #fb7185; color: #881337; background-color: #fff1f2;"> <option value="rating">Sort by Rating</option> <option value="recent">Sort by Recent</option> <option value="title">Sort by Title</option> </select>
+         <h2 class="font-display text-4xl font-bold" style="color: #881337;">find ur next read</h2><select id="sort-select" class="px-4 py-2 rounded-full border-2 font-bubble font-bold focus:outline-none focus:ring-2" style="border-color: #fb7185; color: #881337; background-color: #fff1f2;"> <option value="rating">sort by rating</option> <option value="recent">sort by recent</option> <option value="title">sort by title</option> </select>
         </div>
         <div>
-         <p class="text-sm font-bubble mb-2" style="color: #881337;">Filter by tags (click to toggle):</p>
+         <p class="text-sm font-bubble mb-2" style="color: #881337;">filter by tags (click to toggle):</p>
          <div id="tag-filter-buttons" class="flex flex-wrap gap-2"></div>
         </div>
        </div>
@@ -611,7 +611,7 @@
         container.innerHTML = `
           <div class="text-center py-16">
             <p class="text-xl mb-2 font-bubble" style="color: ${window.elementSdk.config.text_color}">no books here yet!</p>
-            <p class="font-bubble" style="color: ${window.elementSdk.config.text_color}">${currentFilters.size === 0 ? 'be the first to review 📚' : 'try removing some filters'}</p>
+            <p class="font-bubble" style="color: ${window.elementSdk.config.text_color}">${currentFilters.size === 0 ? 'be the first to review 📚' : 'try removing some filters?'}</p>
           </div>
         `;
         return;
@@ -768,13 +768,13 @@
         const user = users.find(u => u.username === username);
         
         if (!user) {
-          errorDiv.textContent = 'Username not found!';
+          errorDiv.textContent = 'username not found!';
           errorDiv.classList.remove('hidden');
           return;
         }
         
         if (user.password !== password) {
-          errorDiv.textContent = 'Wrong password!';
+          errorDiv.textContent = 'wrong password :(';
           errorDiv.classList.remove('hidden');
           return;
         }
@@ -787,7 +787,7 @@
         showToast(`Welcome back, ${username}! 👋`);
         
       } catch (error) {
-        errorDiv.textContent = 'login failed. try again!';
+        errorDiv.textContent = 'login failed. pls try again!';
         errorDiv.classList.remove('hidden');
       } finally {
         submitBtn.disabled = false;
@@ -821,7 +821,7 @@
         const users = getUsers();
         
         if (users.find(u => u.username === username)) {
-          errorDiv.textContent = 'Username taken! Try another.';
+          errorDiv.textContent = 'username taken! try another maybe?';
           errorDiv.classList.remove('hidden');
           submitBtn.disabled = false;
           submitText.textContent = 'create account!';
@@ -914,10 +914,10 @@
           updateStars();
           showToast('review submitted successfully!');
         } else {
-          showToast('failed to submit review. plz try again.');
+          showToast('failed to submit review. pls try again.');
         }
       } catch (error) {
-        showToast('failed to submit review. plz try again.');
+        showToast('failed to submit review. pls try again.');
       } finally {
         submitBtn.disabled = false;
         submitText.textContent = window.elementSdk?.config?.submit_button_text || defaultConfig.submit_button_text;
@@ -930,7 +930,7 @@
       e.preventDefault();
       
       if (!editRating) {
-        showToast('plz select a rating');
+        showToast('pls select a rating');
         return;
       }
       
@@ -1009,7 +1009,7 @@
     document.getElementById('logout-btn').addEventListener('click', () => {
       currentUser = null;
       updateUserStatus();
-      showToast('logged out! see ya! 👋');
+      showToast('${username} logged out! see ya :p');
     });
 
     function updateUserStatus() {
@@ -1061,10 +1061,9 @@
     }
 
     function censorText(text) {
-      // List of slurs to censor (partial list for demonstration)
       const slurs = [
-        'nigger', 'nigga', 'faggot', 'fag', 'tranny', 'dyke', 'kike', 'spic', 'chink', 
-        'gook', 'wetback', 'beaner', 'raghead', 'towelhead', 'retard', 'retarded'
+        'nigger', 'nigga', 'faggot', 'fag', 'tranny', 'dyke', 'chink', 
+        'gook', 'wetback', 'beaner', 'raghead', 'towelhead', 'retard', 'retarded', 'shit','bitch','fuck','nogger','whigger','wigger','chigger','chigga','dumbfuck',
       ];
       
       let censored = text;
